@@ -3,7 +3,7 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Messa
 import google.generativeai as genai
 
 # توکن ربات تلگرام و کلید هوش مصنوعی
-TELEGRAM_TOKEN = "8678378437:AAEkxYaX5mEYfYqtySyJxal4vdKKNmyk_FI"
+TELEGRAM_TOKEN = "8678378437:AAGmMidmnTuS2t6xakF7kgB6ffDKYAZXyXk"
 GEMINI_API_KEY = "AQ.Ab8RN6K34S1MB-Wzu3Xc8VjJCzZC2tt8SVls3C_OsFeJvJe5zw"
 
 # تنظیمات هوش مصنوعی جمنای
