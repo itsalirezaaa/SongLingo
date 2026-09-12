@@ -1,3 +1,6 @@
+import os
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 import google.generativeai as genai
@@ -125,7 +128,17 @@ def run_server():
     port = int(os.environ.get("PORT", 10000))
     server = HTTPServer(("0.0.0.0", port), SimpleHandler)
     server.serve_forever()
+    class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot is running!")
 
+def run_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
+    server.serve_forever()
+    
 # اجرای سرور در پس‌زمینه (قبل از استارت ربات)
 if __name__ == "__main__":
     server_thread = threading.Thread(target=run_server)
@@ -139,3 +152,11 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 application = ApplicationBuilder().token(TOKEN).build()
 
 application.run_polling()
+if __name__ == "__main__":
+    # استارت کردن سرور برای باز نگه داشتن پورت رندر
+    server_thread = threading.Thread(target=run_server)
+    server_thread.daemon = True
+    server_thread.start()
+    
+    # اجرای اصلی ربات خودت
+    application.run_polling()
