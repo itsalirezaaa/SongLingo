@@ -139,3 +139,32 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 application = ApplicationBuilder().token(TOKEN).build()
 
 application.run_polling()
+import os
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+from telegram.ext import ApplicationBuilder
+
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot is running!")
+
+def run_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
+    server.serve_forever()
+
+# استارت کردن وب‌سرور در پس‌زمینه برای پورت رندر
+server_thread = threading.Thread(target=run_server)
+server_thread.daemon = True
+server_thread.start()
+
+# اجرای ربات
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+application = ApplicationBuilder().token(TOKEN).build()
+
+# هندلرها و کدهای رباتت اینجا قرار دارند
+
+application.run_polling()
+
