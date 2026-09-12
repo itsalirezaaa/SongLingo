@@ -110,3 +110,28 @@ if __name__ == '__main__':
 
     print("Smart Music Bot is running...")
     app.run_polling()
+    import os
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+
+# این بخش یک وب‌سرور سبک می‌سازد تا رندر پورت را باز ببیند
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot is running!")
+
+def run_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
+    server.serve_forever()
+
+# اجرای سرور در پس‌زمینه (قبل از استارت ربات)
+if __name__ == "__main__":
+    server_thread = threading.Thread(target=run_server)
+    server_thread.daemon = True
+    server_thread.start()
+    
+    # کدهای اصلی اجرای ربات خودت (مثل run_polling یا infinity_polling) 
+    # باید دقیقاً پایین همین بخش قرار داشته باشند تا با هم اجرا شوند.
+
