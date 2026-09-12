@@ -131,7 +131,12 @@ if __name__ == "__main__":
     server_thread = threading.Thread(target=run_server)
     server_thread.daemon = True
     server_thread.start()
+    if __name__ == "__main__":
+    server_thread = threading.Thread(target=run_server)
+    server_thread.daemon = True
+    server_thread.start()
     
-    # کدهای اصلی اجرای ربات خودت (مثل run_polling یا infinity_polling) 
-    # باید دقیقاً پایین همین بخش قرار داشته باشند تا با هم اجرا شوند.
-
+    TOKEN = os.environ.get("TELEGRAM_TOKEN")
+    application = ApplicationBuilder().token(TOKEN).build()
+    
+    application.run_polling()
