@@ -131,12 +131,11 @@ if __name__ == "__main__":
     server_thread = threading.Thread(target=run_server)
     server_thread.daemon = True
     server_thread.start()
-    if __name__ == "__main__":
     server_thread = threading.Thread(target=run_server)
-    server_thread.daemon = True
-    server_thread.start()
-    
-    TOKEN = os.environ.get("TELEGRAM_TOKEN")
-    application = ApplicationBuilder().token(TOKEN).build()
-    
-    application.run_polling()
+server_thread.daemon = True
+server_thread.start()
+
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+application = ApplicationBuilder().token(TOKEN).build()
+
+application.run_polling()
