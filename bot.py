@@ -9,7 +9,7 @@ import google.generativeai as genai
 TELEGRAM_TOKEN = "8678378437:AAGmMidmnTuS2t6xakF7kgB6ffDKYAZXyXk"
 GEMINI_API_KEY = "AQ.Ab8RN6K34S1MB-Wzu3Xc8VjJCzZC2tt8SVls3C_OsFeJvJe5zw"
 
-# تنظیمات هوش مصنوعی جمنای
+# تنظیمات هوش مصنوعی جمنای[span_1](start_span)[span_1](end_span)
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -104,7 +104,25 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await query.edit_message_text("❌ خطایی در ترجمه رخ داد.")
 
-if __name__ == '__main__':
+# وب‌سرور برای باز نگه داشتن پورت رندر
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot is running!")
+
+def run_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
+    server.serve_forever()
+
+if __name__ == "__main__":
+    # استارت سرور در پس‌زمینه برای رندر
+    server_thread = threading.Thread(target=run_server)
+    server_thread.daemon = True
+    server_thread.start()
+
+    # راه‌اندازی ربات تلگرام
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -113,54 +131,3 @@ if __name__ == '__main__':
 
     print("Smart Music Bot is running...")
     app.run_polling()
-    import os
-from http.server import HTTPServer, BaseHTTPRequestHandler
-import threading
-
-# این بخش یک وب‌سرور سبک می‌سازد تا رندر پورت را باز ببیند
-class SimpleHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Bot is running!")
-
-def run_server():
-    port = int(os.environ.get("PORT", 10000))
-    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
-    server.serve_forever()
-    class SimpleHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Bot is running!")
-class SimpleHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Bot is running!")
-def run_server():
-    port = int(os.environ.get("PORT", 10000))
-    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
-    server.serve_forever()
-    
-# اجرای سرور در پس‌زمینه (قبل از استارت ربات)
-if __name__ == "__main__":
-    server_thread = threading.Thread(target=run_server)
-    server_thread.daemon = True
-    server_thread.start()
-    server_thread = threading.Thread(target=run_server)
-server_thread.daemon = True
-server_thread.start()
-
-TOKEN = os.environ.get("TELEGRAM_TOKEN")
-application = ApplicationBuilder().token(TOKEN).build()
-
-application.run_polling()
-if __name__ == "__main__":
-    # استارت کردن سرور برای باز نگه داشتن پورت رندر
-    server_thread = threading.Thread(target=run_server)
-    server_thread.daemon = True
-    server_thread.start()
-    
-    # اجرای اصلی ربات خودت
-    application.run_polling()
