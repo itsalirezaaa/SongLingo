@@ -22,7 +22,39 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_song_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     song_name = update.message.text
+    print(f"DEBUG: Received song request for -> {song_name}") # این خط رو اضافه کردیم
     waiting_msg = await update.message.reply_text("🔍 در حال جستجوی متن آهنگ...")
+
+    try:
+        prompt = f"Find and write the exact lyrics for the song: {song_name}. If you don't know the exact lyrics, write a clean version or information about it. Keep it nicely formatted."
+        response = model.generate_content(prompt)
+        lyrics = response.text
+        print("DEBUG: Gemini responded successfully!") # این خط هم برای بررسی موفقیت ارتباطه
+
+        context.user_data['last_lyrics'] = lyrics
+
+        keyboard = [
+            [
+                InlineKeyboardButton("🇮🇷 فارسی", callback_data="lang_fa"),
+                InlineKeyboardButton("🇹🇷 ترکی", callback_data="lang_tr")
+            ],
+            [
+                InlineKeyboardButton("🇫🇷 فرانسوی", callback_data="lang_fr"),
+                InlineKeyboardButton("🇩🇪 آلمانی", callback_data="lang_de"),
+                InlineKeyboardButton("🇸🇦 عربی", callback_data="lang_ar")
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await waiting_msg.edit_text(
+            f"🎵 متن اصلی آهنگ:\n\n{lyrics}\n\n👇 حالا زبان مورد نظر برای ترجمه را انتخاب کنید:",
+            reply_markup=reply_markup,
+            parse_mode="Markdown"
+        )
+
+    except Exception as e:
+        print(f"DEBUG ERROR: {e}") # چاپ خطای دقیق در لاگ رندر
+        await waiting_msg.edit_text(f"❌ خطا: {e}") # چاپ خود ارور به جای متن کلی در تلگرام
 
     try:
         prompt = f"Find and write the exact lyrics for the song: {song_name}. If you don't know the exact lyrics, write a clean version or information about it. Keep it nicely formatted."
